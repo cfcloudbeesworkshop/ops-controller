@@ -18,6 +18,43 @@ items:
       filter: true
   items:
   - kind: organizationFolder
+    name: controller-provision
+    orphanedItemStrategy:
+      defaultOrphanedItemStrategy:
+        pruneDeadBranches: true
+        daysToKeep: -1
+        numToKeep: -1
+    SCMSources:
+    navigators:
+    - github:
+        apiUri: https://api.github.com
+        traits:
+        - gitHubBranchDiscovery:
+            strategyId: 1
+        - headWildcardFilter:
+            excludes: ''
+            includes: main
+        repoOwner: cfcloudbeesworkshop
+        credentialsId: cloudbees-ci-casc-workshop-github-app
+    projectFactories:
+    - customMultiBranchProjectFactory:
+        factory:
+          customBranchProjectFactory:
+            marker: controller.yaml
+            definition:
+              cpsScmFlowDefinition:
+                scriptPath: controller-provision
+                scm:
+                  gitSCM:
+                    userRemoteConfigs:
+                    - userRemoteConfig:
+                        credentialsId: cloudbees-ci-casc-workshop-github-app
+                        url: https://github.com/cfcloudbeesworkshop/ops-controller.git
+                    branches:
+                    - branchSpec:
+                        name: '*/main'
+                lightweight: true
+  - kind: organizationFolder
     name: controller-casc-update
     orphanedItemStrategy:
       defaultOrphanedItemStrategy:
